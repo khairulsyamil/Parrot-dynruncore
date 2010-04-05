@@ -12,12 +12,14 @@ void Parrot_lib_TestRuncore_init(Parrot_Interp interp, Parrot_PMC me) {
 }
 // ^ the above 2 functions currently serve no purpose.
 
+// I don't think this is anywhere near a proper runcore.
+// Todo: Investigate the runcore_api.
 
 opcode_t *
 TestRuncore_runops(Parrot_Interp interp, Parrot_runcore_t *runcore, opcode_t *pc)
 {	
 	printf("Running ops!\n");
-	//This is a copy of the runops function in doctor.c
+	//This is a copy of the runops function in doctor.c in the repository Parrot-Instrument.
 
     while (pc) {
 		Parrot_pcc_set_pc(interp, CURRENT_CONTEXT(interp), pc);
@@ -35,17 +37,15 @@ TestRuncore_init (Parrot_Interp interp,  oplib_init_f OpLibInit) {
 	Parrot_runcore_t * const coredata = mem_gc_allocate_zeroed_typed(interp, Parrot_runcore_t);
 	
 	coredata->name			= string_from_literal(interp, "TestRuncore");
-	coredata->id			= PARROT_FUNCTION_CORE; // <- Just use this constant for now.
+	coredata->id			= PARROT_FUNCTION_CORE; // <- Just use this constant for now. The constants are hardcoded enums.
 	coredata->opinit		= OpLibInit; // <- For now, use the function pointer that was passed.
-				    		             //    Todo: Figure out how to compile in core_ops.c, then this runcore is standalone.
+	//    Todo: Figure out how to compile in core_ops.c, then this runcore is standalone.
 	coredata->runops		= TestRuncore_runops;
 	coredata->prepare_run	= NULL; // Todo: Find out what the three below does.
 	coredata->destroy		= NULL;
 	coredata->flags			= 0;
 	
-	PARROT_RUNCORE_FUNC_TABLE_SET(coredata);
-	// ^ Macro defined in runcore_api.h
-	//   Sets the op_func table.
+	PARROT_RUNCORE_FUNC_TABLE_SET(coredata); // <- So this sets the flags field above. Todo: Find out what it affects.
 	
 	Parrot_runcore_register(interp, coredata);
 	

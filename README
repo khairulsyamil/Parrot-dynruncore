@@ -1,6 +1,9 @@
 This serves as the source code repository for my
 trials in implementing a dynloadable runcore for Parrot VM.
 
+This is in reference to Parrot Trac Ticket #1532
+http://trac.parrot.org/parrot/ticket/1532
+
 ======= Compiling TestRuncore.c under Mac OS X 10.6 ======
 
 I intend TestRuncore.c to be a standalone dynamically loaded

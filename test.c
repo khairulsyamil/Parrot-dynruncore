@@ -19,8 +19,6 @@ int main (int argc, char ** argv) {
 	//We want to grab the opinit value of slow_core's runcore_t.
 	//This is only temporary, as I have not figured out how to compile
 	// core_ops.c together with TestRuncore to create a standalone runcore.
-	//Also to investigate is if the OpLibs are dynamic libraries, as suggested
-	// in runcore/main.c
 	Parrot_set_run_core(p, PARROT_SLOW_CORE);
 	
 	//Try loading the thing.
