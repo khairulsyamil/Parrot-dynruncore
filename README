@@ -1,0 +1,93 @@
+This serves as the source code repository for my
+trials in implementing a dynloadable runcore for Parrot VM.
+
+======= Compiling TestRuncore.c under Mac OS X 10.6 ======
+
+I intend TestRuncore.c to be a standalone dynamically loaded
+runcore. It is not so currently, due to me having not figured out
+the oplibs.
+(basically how to compile core_ops.c together with
+TestRuncore.c, lots of missing symbols, so I'll leave it as
+a puzzle for another day)
+
+Under Mac OS X 10.6, I am able to create a dynamic library out of
+TestRuncore.c using the following commands:
+
+-----------------------------------------------------------------
+gcc -fPIC -c TestRuncore.c -o TestRuncore.o
+c++ -o TestRuncore.bundle TestRuncore.o undefined dynamic_lookup -bundle
+-----------------------------------------------------------------
+
+After that, I moved TestRuncore.bundle to Parrot's runtime library path.
+For my case, I moved it to:
+
+/usr/local/lib/parrot/2.2.0-devel/dynext/TestRuncore.bundle
+
+
+======= Compiling test.c under Mac OS X 10.6 ======
+
+test.c will load up TestRuncore, initializes it and TestRuncore
+will switch the interpreter's runcore to itself.
+
+Compiling it on my system is as follows:
+
+-----------------------------------------------------------------
+gcc -Wall -lparrot test.c ../../parrot/src/platform.c -g
+-----------------------------------------------------------------
+
+(replace "../../parrot/src/platform.c" with wherever platform.c is)
+
+Running the binary on a pir file (mandel.pir in /examples/pir):
+
+-----------------------------------------------------------------
+./a.out ../../parrot/examples/pir/mandel.pir
+-----------------------------------------------------------------
+
+The output yields the following, with the first 6 lines being
+some print statements that I put in test.c and TestRuncore.c to
+check if its loaded and running correctly.
+
+-----------------------------------------------------------------
+
+I am loaded!
+I am initializing!
+A: ParrotLibrary
+B: TestRuncore
+Initializing runcore!
+Running ops!
+................::::::::::::::::::::::::::::::::::::::::::::...............
+...........::::::::::::::::::::::::::::::::::::::::::::::::::::::..........
+........::::::::::::::::::::::::::::::::::,,,,,,,:::::::::::::::::::.......
+.....:::::::::::::::::::::::::::::,,,,,,,,,,,,,,,,,,,,,,:::::::::::::::....
+...::::::::::::::::::::::::::,,,,,,,,,,,,;;;!:H!!;;;,,,,,,,,:::::::::::::..
+:::::::::::::::::::::::::,,,,,,,,,,,,,;;;;!!/>&*|& !;;;,,,,,,,:::::::::::::
+::::::::::::::::::::::,,,,,,,,,,,,,;;;;;!!//)|.*#|>/!;;;;;,,,,,,:::::::::::
+::::::::::::::::::,,,,,,,,,,,,;;;;;;!!!!//>|:    !:|//!!;;;;;,,,,,:::::::::
+:::::::::::::::,,,,,,,,,,;;;;;;;!!/>>I>>)||I#     H&))>////*!;;,,,,::::::::
+::::::::::,,,,,,,,,,;;;;;;;;;!!!!/>H:  #|              IH&*I#/;;,,,,:::::::
+::::::,,,,,,,,,;;;;;!!!!!!!!!!//>|.H:                     #I>!!;;,,,,::::::
+:::,,,,,,,,,;;;;!/||>///>>///>>)|H                         %|&/;;,,,,,:::::
+:,,,,,,,,;;;;;!!//)& :;I*,H#&||&/                           *)/!;;,,,,,::::
+,,,,,,;;;;;!!!//>)IH:,        ##                            #&!!;;,,,,,::::
+,;;;;!!!!!///>)H%.**           *                            )/!;;;,,,,,::::
+                                                          &)/!!;;;,,,,,::::
+,;;;;!!!!!///>)H%.**           *                            )/!;;;,,,,,::::
+,,,,,,;;;;;!!!//>)IH:,        ##                            #&!!;;,,,,,::::
+:,,,,,,,,;;;;;!!//)& :;I*,H#&||&/                           *)/!;;,,,,,::::
+:::,,,,,,,,,;;;;!/||>///>>///>>)|H                         %|&/;;,,,,,:::::
+::::::,,,,,,,,,;;;;;!!!!!!!!!!//>|.H:                     #I>!!;;,,,,::::::
+::::::::::,,,,,,,,,,;;;;;;;;;!!!!/>H:  #|              IH&*I#/;;,,,,:::::::
+:::::::::::::::,,,,,,,,,,;;;;;;;!!/>>I>>)||I#     H&))>////*!;;,,,,::::::::
+::::::::::::::::::,,,,,,,,,,,,;;;;;;!!!!//>|:    !:|//!!;;;;;,,,,,:::::::::
+::::::::::::::::::::::,,,,,,,,,,,,,;;;;;!!//)|.*#|>/!;;;;;,,,,,,:::::::::::
+:::::::::::::::::::::::::,,,,,,,,,,,,,;;;;!!/>&*|& !;;;,,,,,,,:::::::::::::
+...::::::::::::::::::::::::::,,,,,,,,,,,,;;;!:H!!;;;,,,,,,,,:::::::::::::..
+.....:::::::::::::::::::::::::::::,,,,,,,,,,,,,,,,,,,,,,:::::::::::::::....
+........::::::::::::::::::::::::::::::::::,,,,,,,:::::::::::::::::::.......
+...........::::::::::::::::::::::::::::::::::::::::::::::::::::::..........
+
+-----------------------------------------------------------------
+
+
+So, I can say the experiment is a success.
+More work is needed, and will be expended when time allows.
